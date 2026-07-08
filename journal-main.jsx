@@ -140,9 +140,6 @@ function JournalApp() {
         return arr;
     }, [collectItems]);
 
-    // Home only shows categories that have at least one collected (ticked) item.
-    const shownCats = React.useMemo(() => cats.filter((c) => ((stats[c.id] || {}).count || 0) > 0), [cats, stats]);
-
     return (
         <J_Cursor>
             <div style={JS.page}>
@@ -163,15 +160,15 @@ function JournalApp() {
                                 <J_Title color="app-teal" size="large">Categories</J_Title>
                                 <J_Button type="primary" onClick={() => setCatDrawer({ open: true, editing: null })}>+ New Category</J_Button>
                             </div>
-                            {loading ? null : shownCats.length === 0 ? (
+                            {loading ? null : cats.length === 0 ? (
                                 <J_Empty
-                                    title="Nothing here yet"
-                                    hint="Add things to your ToCollect list and tick them off — they’ll show up here under their category."
-                                    action={<J_Button type="primary" onClick={openCollect}>Go to ToCollect List</J_Button>}
+                                    title="No categories yet"
+                                    hint="Create your first category — Books, Plants, Tools, anything you like."
+                                    action={<J_Button type="primary" onClick={() => setCatDrawer({ open: true, editing: null })}>+ New Category</J_Button>}
                                 />
                             ) : (
                                 <div style={JS.grid}>
-                                    {shownCats.map((cat) => (
+                                    {cats.map((cat) => (
                                         <J_CatCard
                                             key={cat.id}
                                             cat={cat}
