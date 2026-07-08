@@ -100,12 +100,12 @@
             if (error) throw error;
             return count || 0;
         },
-        async addItem({ categoryId, name, quality, photo, quantity }) {
+        async addItem({ categoryId, name, quality, photo, quantity, collected }) {
             let path = null;
             if (photo instanceof Blob) path = await uploadPhoto(photo);
             const row = {
                 category_id: categoryId, name: name.trim(), quality: quality || '',
-                quantity: quantity == null ? 1 : Math.max(1, quantity), collected: false,
+                quantity: quantity == null ? 1 : Math.max(1, quantity), collected: !!collected,
                 photo: path, created_at: Date.now(),
             };
             const { data, error } = await sb.from('items').insert(row).select().single();

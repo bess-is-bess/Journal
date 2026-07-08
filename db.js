@@ -110,11 +110,11 @@
             const rows = await getAll('items');
             return rows.length;
         },
-        async addItem({ categoryId, name, quality, photo, quantity }) {
+        async addItem({ categoryId, name, quality, photo, quantity, collected }) {
             const item = {
                 id: uid(), categoryId, name: name.trim(), quality: quality || '',
                 photo: photo || null, quantity: quantity == null ? 1 : Math.max(1, quantity),
-                collected: false, createdAt: Date.now(),
+                collected: !!collected, createdAt: Date.now(),
             };
             await run('items', 'readwrite', (os) => os.put(item));
             return item;

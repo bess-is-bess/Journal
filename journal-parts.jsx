@@ -1,5 +1,5 @@
 /* Journal — a cozy Animal-Crossing 收纳 app.
-   Categories -> items (name, quality, photo). Data in IndexedDB (window.JournalDB).
+   Categories -> items (name, quantity, photo). Data in IndexedDB (window.JournalDB).
    UI composed from the Animal Island UI design system bundle. */
 
 const NS = window.AnimalIslandUIDesignSystem_ed2c2c;
@@ -10,15 +10,6 @@ function jAsset(rel) {
     if (s && s.src) return s.src.replace(/_ds_bundle\.js.*$/, '') + rel;
     return rel;
 }
-
-const QUALITIES = [
-    { key: 'brand-new', label: 'Brand New', color: 'app-green' },
-    { key: 'like-new', label: 'Like New', color: 'app-teal' },
-    { key: 'good', label: 'Good', color: 'app-yellow' },
-    { key: 'fair', label: 'Fair', color: 'app-orange' },
-    { key: 'worn', label: 'Worn', color: 'app-red' },
-];
-const qualityOf = (key) => QUALITIES.find((q) => q.key === key);
 
 const CAT_COLORS = ['app-teal', 'app-pink', 'purple', 'app-blue', 'app-yellow', 'app-orange', 'app-green', 'app-red', 'lime-green', 'warm-peach-pink'];
 const HEX = {
@@ -113,7 +104,6 @@ function CategoryCard({ cat, count, qty, onOpen, onEdit, onDelete }) {
    Item card
    ============================================================ */
 function ItemCard({ item, onEdit, onDelete }) {
-    const q = qualityOf(item.quality);
     return (
         <Card style={{ padding: 0, overflow: 'hidden' }}>
             <div style={{ position: 'relative', height: 150 }}>
@@ -126,7 +116,6 @@ function ItemCard({ item, onEdit, onDelete }) {
             <div style={{ padding: '14px 16px 16px' }}>
                 <div style={{ fontSize: 16, fontWeight: 800, color: '#794f27', lineHeight: 1.25, wordBreak: 'break-word' }}>{item.name}</div>
                 <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                    {q ? <Tag size="small" color={q.color}>{q.label}</Tag> : null}
                     <span style={{ fontSize: 12, fontWeight: 700, color: '#8a7b66' }}>×{item.quantity || 1}</span>
                 </div>
                 <div style={journalStyles.cardActions}>
@@ -195,7 +184,6 @@ function CategoryDrawer({ open, editing, onClose, onSave }) {
    ============================================================ */
 function ItemDrawer({ open, editing, onClose, onSave }) {
     const [name, setName] = React.useState('');
-    const [quality, setQuality] = React.useState('good');
     const [photo, setPhoto] = React.useState(null);
     const [quantity, setQuantity] = React.useState(1);
     const fileRef = React.useRef(null);
@@ -203,7 +191,6 @@ function ItemDrawer({ open, editing, onClose, onSave }) {
     React.useEffect(() => {
         if (open) {
             setName(editing ? editing.name : '');
-            setQuality(editing ? editing.quality || 'good' : 'good');
             setPhoto(editing ? editing.photo : null);
             setQuantity(editing ? editing.quantity || 1 : 1);
         }
@@ -225,7 +212,7 @@ function ItemDrawer({ open, editing, onClose, onSave }) {
             footer={
                 <>
                     <Button onClick={onClose}>Cancel</Button>
-                    <Button type="primary" disabled={!canSave} onClick={() => onSave({ name, quality, photo, quantity })}>Save</Button>
+                    <Button type="primary" disabled={!canSave} onClick={() => onSave({ name, photo, quantity })}>Save</Button>
                 </>
             }
         >
@@ -260,9 +247,6 @@ function ItemDrawer({ open, editing, onClose, onSave }) {
 
                 <label style={{ display: 'block', margin: '22px 0 8px', color: '#794f27' }}>Quantity</label>
                 <QtyStepper value={quantity} onChange={setQuantity} />
-
-                <label style={{ display: 'block', margin: '22px 0 8px', color: '#794f27' }}>Quality</label>
-                <Select value={quality} onChange={setQuality} options={QUALITIES.map((q) => ({ key: q.key, label: q.label }))} />
             </div>
         </Drawer>
     );
@@ -353,13 +337,11 @@ function CollectDrawer({ open, editing, categories, onClose, onSave }) {
     const [newColor, setNewColor] = React.useState('app-teal');
     const [mode, setMode] = React.useState('existing');
     const [quantity, setQuantity] = React.useState(1);
-    const [quality, setQuality] = React.useState('good');
 
     React.useEffect(() => {
         if (!open) return;
         setName(editing ? editing.name : '');
         setQuantity(editing ? editing.quantity || 1 : 1);
-        setQuality(editing ? editing.quality || 'good' : 'good');
         setNewCat('');
         setNewColor('app-teal');
         if (editing) {
@@ -380,7 +362,7 @@ function CollectDrawer({ open, editing, categories, onClose, onSave }) {
 
     const doSave = () =>
         onSave({
-            name, quantity, quality,
+            name, quantity,
             categoryId: mode === 'existing' ? catId : null,
             newCategory: mode === 'new' ? { name: newCat, color: newColor } : null,
         });
@@ -432,12 +414,9 @@ function CollectDrawer({ open, editing, categories, onClose, onSave }) {
 
                 <label style={lbl}>Quantity</label>
                 <QtyStepper value={quantity} onChange={setQuantity} />
-
-                <label style={lbl}>Quality</label>
-                <Select value={quality} onChange={setQuality} options={QUALITIES.map((q) => ({ key: q.key, label: q.label }))} />
             </div>
         </Drawer>
     );
 }
 
-window.JournalParts = { NS, jAsset, QUALITIES, qualityOf, CAT_COLORS, HEX, journalStyles, PhotoImg, PhotoPlaceholder, MiniBtn, EmptyState, CategoryCard, ItemCard, CategoryDrawer, ItemDrawer, QtyStepper, TickBox, CollectRow, CollectDrawer, formatDay, dayKey };
+window.JournalParts = { NS, jAsset, CAT_COLORS, HEX, journalStyles, PhotoImg, PhotoPlaceholder, MiniBtn, EmptyState, CategoryCard, ItemCard, CategoryDrawer, ItemDrawer, QtyStepper, TickBox, CollectRow, CollectDrawer, formatDay, dayKey };

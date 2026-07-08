@@ -12,8 +12,7 @@ const DB = window.JournalDB;
 function JournalApp() {
     const [loading, setLoading] = React.useState(true);
     const [cats, setCats] = React.useState([]);
-    const [stats, setStats] = React.useState({}); // { catId: { count, qty } }
-    const [total, setTotal] = React.useState(0);
+    const [stats, setStats] = React.useState({}); // { catId: { count, qty } } — collected items only
     const [view, setView] = React.useState({ name: 'home', cat: null });
     const [items, setItems] = React.useState([]); // items in the open category
     const [collectItems, setCollectItems] = React.useState([]); // every item (checklist)
@@ -24,17 +23,25 @@ function JournalApp() {
     const [confirm, setConfirm] = React.useState({ open: false });
 
     const loadHome = React.useCallback(async () => {
-        const [c, st, t] = await Promise.all([DB.listCategories(), DB.statsByCategory(), DB.totalItems()]);
+        const [c, all] = await Promise.all([DB.listCategories(), DB.allItems()]);
+        // Home reflects only collected (ticked) items — count per category, collected only.
+        const st = {};
+        all.forEach((it) => {
+            if (!it.collected) return;
+            const m = st[it.categoryId] || (st[it.categoryId] = { count: 0, qty: 0 });
+            m.count += 1;
+            m.qty += it.quantity || 1;
+        });
         setCats(c);
         setStats(st);
-        setTotal(t);
         setLoading(false);
     }, []);
     React.useEffect(() => {
         loadHome();
     }, [loadHome]);
 
-    const loadItems = React.useCallback(async (catId) => setItems(await DB.listItems(catId)), []);
+    // Category detail shows only collected items (consistent with the Home card count).
+    const loadItems = React.useCallback(async (catId) => setItems((await DB.listItems(catId)).filter((it) => it.collected)), []);
     const loadCollect = React.useCallback(async () => {
         const [all, c] = await Promise.all([DB.allItems(), DB.listCategories()]);
         setCollectItems(all);
@@ -69,34 +76,33 @@ function JournalApp() {
     };
 
     /* ----- item CRUD (category view) ----- */
-    const saveItem = async ({ name, quality, photo, quantity }) => {
+    const saveItem = async ({ name, photo, quantity }) => {
         const catId = view.cat.id;
-        if (itemDrawer.editing) await DB.updateItem({ ...itemDrawer.editing, name: name.trim(), quality, photo, quantity });
-        else await DB.addItem({ categoryId: catId, name, quality, photo, quantity });
+        // Items added straight to a category are things you already own → collected.
+        if (itemDrawer.editing) await DB.updateItem({ ...itemDrawer.editing, name: name.trim(), photo, quantity });
+        else await DB.addItem({ categoryId: catId, name, photo, quantity, collected: true });
         setItemDrawer({ open: false, editing: null });
         await loadItems(catId);
-        setTotal(await DB.totalItems());
     };
     const removeItem = async (item) => {
         await DB.deleteItem(item.id);
         setConfirm({ open: false });
         await loadItems(view.cat.id);
-        setTotal(await DB.totalItems());
     };
 
     /* ----- to-collect CRUD ----- */
-    const saveCollect = async ({ name, quantity, quality, categoryId, newCategory }) => {
+    const saveCollect = async ({ name, quantity, categoryId, newCategory }) => {
         let catId = categoryId;
         if (!catId && newCategory && newCategory.name.trim()) {
             const created = await DB.addCategory(newCategory);
             catId = created.id;
         }
         if (!catId) return;
-        if (collectDrawer.editing) await DB.updateItem({ ...collectDrawer.editing, name: name.trim(), quantity, quality, categoryId: catId });
-        else await DB.addItem({ categoryId: catId, name, quality, quantity });
+        // ToCollect items start un-ticked (a wishlist) — they reach Home only once collected.
+        if (collectDrawer.editing) await DB.updateItem({ ...collectDrawer.editing, name: name.trim(), quantity, categoryId: catId });
+        else await DB.addItem({ categoryId: catId, name, quantity });
         setCollectDrawer({ open: false, editing: null });
         await loadCollect();
-        setTotal(await DB.totalItems());
     };
     const toggleCollect = async (item) => {
         await DB.updateItem({ ...item, collected: !item.collected });
@@ -106,7 +112,6 @@ function JournalApp() {
         await DB.deleteItem(item.id);
         setConfirm({ open: false });
         await loadCollect();
-        setTotal(await DB.totalItems());
     };
 
     /* ----- confirm ----- */
@@ -135,6 +140,9 @@ function JournalApp() {
         return arr;
     }, [collectItems]);
 
+    // Home only shows categories that have at least one collected (ticked) item.
+    const shownCats = React.useMemo(() => cats.filter((c) => ((stats[c.id] || {}).count || 0) > 0), [cats, stats]);
+
     return (
         <J_Cursor>
             <div style={JS.page}>
@@ -146,10 +154,6 @@ function JournalApp() {
                         <div style={{ fontSize: 13, fontWeight: 600, color: '#9f927d', marginTop: 3 }}>Your cozy little collection</div>
                     </div>
                     <J_Button type={view.name === 'tocollect' ? 'primary' : 'default'} onClick={openCollect}>ToCollect List</J_Button>
-                    <div style={{ textAlign: 'center', background: 'rgb(247,243,223)', borderRadius: 16, padding: '8px 18px' }}>
-                        <div style={{ fontSize: 22, fontWeight: 900, color: '#8b7355', lineHeight: 1 }}>{total}</div>
-                        <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#9f927d', marginTop: 3 }}>things kept</div>
-                    </div>
                 </div>
 
                 <div style={JS.content}>
@@ -159,15 +163,15 @@ function JournalApp() {
                                 <J_Title color="app-teal" size="large">Categories</J_Title>
                                 <J_Button type="primary" onClick={() => setCatDrawer({ open: true, editing: null })}>+ New Category</J_Button>
                             </div>
-                            {loading ? null : cats.length === 0 ? (
+                            {loading ? null : shownCats.length === 0 ? (
                                 <J_Empty
-                                    title="No categories yet"
-                                    hint="Create your first category — Books, Plants, Tools, anything you like."
-                                    action={<J_Button type="primary" onClick={() => setCatDrawer({ open: true, editing: null })}>+ New Category</J_Button>}
+                                    title="Nothing here yet"
+                                    hint="Add things to your ToCollect list and tick them off — they’ll show up here under their category."
+                                    action={<J_Button type="primary" onClick={openCollect}>Go to ToCollect List</J_Button>}
                                 />
                             ) : (
                                 <div style={JS.grid}>
-                                    {cats.map((cat) => (
+                                    {shownCats.map((cat) => (
                                         <J_CatCard
                                             key={cat.id}
                                             cat={cat}
@@ -195,7 +199,7 @@ function JournalApp() {
                             {items.length === 0 ? (
                                 <J_Empty
                                     title="This category is empty"
-                                    hint="Add your first item with a name, quantity, quality and a photo."
+                                    hint="Add your first item with a name, quantity and a photo."
                                     action={<J_Button type="primary" onClick={() => setItemDrawer({ open: true, editing: null })}>+ Add Item</J_Button>}
                                 />
                             ) : (
