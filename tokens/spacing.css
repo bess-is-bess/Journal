@@ -1,0 +1,33 @@
+/* ============================================================
+   Animal Island UI — Spacing, radius, border & sizing tokens
+   Big pill radii (50px on buttons/inputs); nothing interactive
+   below a 12px corner. 4-based spacing scale.
+   ============================================================ */
+
+:root {
+    /* ---------- Spacing (4-based) ---------- */
+    --animal-spacing-xs: 4px;
+    --animal-spacing-sm: 8px;
+    --animal-spacing-md: 12px;
+    --animal-spacing-lg: 16px;
+    --animal-spacing-xl: 24px;
+
+    /* ---------- Radius ---------- */
+    --animal-border-radius-sm: 16px; /* small button/control (source @border-radius-sm) */
+    --animal-border-radius-base: 18px; /* collapse / time widget */
+    --animal-border-radius-lg: 24px; /* large button */
+    --animal-border-radius-card: 20px; /* cards / table / modal-ish */
+    --animal-border-radius-pill: 50px; /* buttons / inputs (signature) */
+    /* Absolute floor for any interactive corner is 12px — never sharper. */
+
+    /* ---------- Border width ---------- */
+    --animal-border-width: 2px; /* standard */
+    --animal-border-width-input: 2.5px; /* input / checkbox */
+    --animal-border-width-input-lg: 3px; /* large input / time widget */
+
+    /* ---------- Control heights ---------- */
+    --animal-height-sm: 32px;
+    --animal-height-base: 40px;
+    --animal-height-btn: 45px; /* middle button (note: not 40) */
+    --animal-height-lg: 48px;
+}

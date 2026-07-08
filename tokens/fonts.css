@@ -1,0 +1,52 @@
+/* ============================================================
+   Animal Island UI — Webfont declarations
+   Nunito (Latin, primary) + Noto Sans SC (Latin subset, CJK fallback)
+   Weights shipped by the source library: Nunito 500/700/900,
+   Noto Sans SC 400/500/700. Do not add weights the source omits.
+   ============================================================ */
+
+/* ---------- Nunito (primary Latin typeface) ---------- */
+@font-face {
+    font-family: 'Nunito';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url('../assets/fonts/nunito-latin-500-normal.woff2') format('woff2');
+}
+@font-face {
+    font-family: 'Nunito';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url('../assets/fonts/nunito-latin-700-normal.woff2') format('woff2');
+}
+@font-face {
+    font-family: 'Nunito';
+    font-style: normal;
+    font-weight: 900;
+    font-display: swap;
+    src: url('../assets/fonts/nunito-latin-900-normal.woff2') format('woff2');
+}
+
+/* ---------- Noto Sans SC (CJK + weight-400 fallback) ---------- */
+@font-face {
+    font-family: 'Noto Sans SC';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../assets/fonts/noto-sans-sc-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+    font-family: 'Noto Sans SC';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url('../assets/fonts/noto-sans-sc-latin-500-normal.woff2') format('woff2');
+}
+@font-face {
+    font-family: 'Noto Sans SC';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url('../assets/fonts/noto-sans-sc-latin-700-normal.woff2') format('woff2');
+}

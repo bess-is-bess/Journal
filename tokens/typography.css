@@ -1,0 +1,35 @@
+/* ============================================================
+   Animal Island UI — Typography tokens
+   Nunito rounded display + body, weight 500–900. No weight below 400,
+   never a monospace stack for UI text (code blocks excepted).
+   ============================================================ */
+
+:root {
+    /* ---------- Family ---------- */
+    --animal-font-family:
+        Nunito, 'Noto Sans SC', -apple-system, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    /* CodeBlock only — intentional system-monospace stack (source uses no bundled mono font) */
+    --animal-font-family-mono: 'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+
+    /* ---------- Size scale ---------- */
+    --animal-font-size-sm: 12px;
+    --animal-font-size-base: 14px;
+    --animal-font-size-lg: 16px;
+
+    /* ---------- Weight scale ---------- */
+    --animal-font-weight-placeholder: 400; /* placeholders / helper text */
+    --animal-font-weight-body: 500; /* body copy */
+    --animal-font-weight-medium: 600; /* buttons / tabs / menu items */
+    --animal-font-weight-bold: 700; /* headings / table header */
+    --animal-font-weight-heavy: 900; /* Time digits / Title ribbon */
+
+    /* ---------- Line height ---------- */
+    --animal-line-height-base: 1.5715;
+    --animal-line-height-tight: 1.4;
+    --animal-line-height-loose: 1.7;
+
+    /* ---------- Letter spacing ---------- */
+    --animal-letter-spacing-body: 0.01em; /* body / inputs */
+    --animal-letter-spacing-wide: 0.02em; /* buttons / titles */
+    --animal-letter-spacing-caps: 1.5px; /* uppercase weekday labels */
+}

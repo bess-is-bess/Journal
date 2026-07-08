@@ -1,0 +1,13 @@
+/* ============================================================
+   Animal Island UI — Global stylesheet entry point
+   Consumers link THIS one file. It only @imports token layers and
+   the webfont declarations — no rules live here directly.
+   Design language: Animal Crossing: New Horizons-inspired cozy,
+   pastoral, rounded UI. Source of truth: animal-island-ui (v0.9.5).
+   ============================================================ */
+
+@import './tokens/fonts.css';
+@import './tokens/colors.css';
+@import './tokens/typography.css';
+@import './tokens/spacing.css';
+@import './tokens/shadows.css';

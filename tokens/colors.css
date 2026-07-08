@@ -1,0 +1,91 @@
+/* ============================================================
+   Animal Island UI — Color tokens
+   Warm-earth text · mint-teal accent · cream-parchment surfaces.
+   NEVER pure black text, NEVER cold grey/blue. All values are
+   copied verbatim from the source library (variables.less + SKILL.md).
+   ============================================================ */
+
+:root {
+    /* ---------- Primary (mint teal) ---------- */
+    --animal-primary-color: #19c8b9;
+    --animal-primary-color-hover: #3dd4c6;
+    --animal-primary-color-active: #11a89b;
+    --animal-primary-color-bg: #e6f9f6;
+
+    /* ---------- Text (warm brown earth) ---------- */
+    --animal-text-color: #794f27; /* headings / sidebar / checked label */
+    --animal-text-color-body: #725d42; /* body copy inside components */
+    --animal-text-color-secondary: #9f927d; /* secondary / meta */
+    --animal-text-color-muted: #8a7b66; /* muted (modal body) */
+    --animal-text-color-disabled: #c4b89e; /* disabled / placeholder */
+
+    /* ---------- Surfaces (cream parchment) ---------- */
+    --animal-bg-color: #f8f8f0; /* app / button base */
+    --animal-bg-color-content: rgb(247, 243, 223); /* card / modal / drawer / table / input */
+    --animal-bg-color-secondary: #f0e8d8; /* text-button hover */
+    --animal-bg-color-disabled: #f0ece2; /* disabled control fill */
+    --animal-bg-color-input-disabled: #ece8dc;
+    --animal-bg-color-select: #fffcef; /* select dropdown panel */
+
+    /* ---------- Borders ---------- */
+    --animal-border-color: #9f927d; /* standard 2px border */
+    --animal-border-color-light: #c4b89e; /* input border */
+    --animal-border-color-hover: #a89878; /* input hover */
+    --animal-border-color-divider: #e8e2d6; /* thin hairline */
+
+    /* ---------- Status ---------- */
+    --animal-success-color: #6fba2c;
+    --animal-success-color-hover: #85cc45;
+    --animal-success-color-active: #5a9e1e;
+    --animal-warning-color: #f5c31c;
+    --animal-warning-color-hover: #f7d04a;
+    --animal-warning-color-active: #dba90e;
+    --animal-error-color: #e05a5a;
+    --animal-error-color-hover: #e87878;
+    --animal-error-color-active: #c94444;
+
+    /* Switch ON / OFF track */
+    --animal-switch-on-bg: #86d67a;
+    --animal-switch-on-border: #6fba2c;
+    --animal-switch-off-bg: #d4c9b4;
+    --animal-switch-off-border: #c4b89e;
+
+    /* ---------- Game-special ---------- */
+    --animal-focus-yellow: #ffcc00; /* Input / Switch / Checkbox focus */
+    --animal-focus-yellow-dark: #e0b800; /* focus 3D shadow */
+    --animal-focus-yellow-radio: #f5c31c; /* Radio / Tag focus (one notch warmer) */
+    --animal-modal-confirm-bg: #ffcc00; /* Modal primary action (game yellow) */
+    --animal-sidebar-active-bg: #b7c6e5; /* demo sidebar selected */
+    --animal-sidebar-hover-bg: #d6dff0; /* demo sidebar hover */
+
+    /* ---------- Overlays ---------- */
+    --animal-mask-bg: rgba(0, 0, 0, 0.35); /* Modal mask */
+    --animal-mask-bg-drawer: rgba(0, 0, 0, 0.18); /* Drawer mask (lighter, keeps sunk bg visible) */
+
+    /* ============================================================
+       NookPhone 13-color palette — shared by Card.color, Card.pattern,
+       Title.color and Tag.color. Each has a paired legible text color.
+       ============================================================ */
+    --animal-nook-default: rgb(247, 243, 223);
+    --animal-nook-default-text: #725d42;
+    --animal-nook-app-pink: #f8a6b2;
+    --animal-nook-purple: #b77dee;
+    --animal-nook-app-blue: #889df0;
+    --animal-nook-app-yellow: #f7cd67;
+    --animal-nook-app-yellow-text: #725d42;
+    --animal-nook-app-orange: #e59266;
+    --animal-nook-app-teal: #82d5bb;
+    --animal-nook-app-green: #8ac68a;
+    --animal-nook-app-red: #fc736d;
+    --animal-nook-lime-green: #d1da49;
+    --animal-nook-lime-green-text: #3d5a1a;
+    --animal-nook-yellow-green: #ecdf52;
+    --animal-nook-yellow-green-text: #725d42;
+    --animal-nook-brown: #9a835a;
+    --animal-nook-warm-peach-pink: #e18c6f;
+
+    /* ---------- Currency (Wallet) ---------- */
+    --animal-wallet-fill: #b3a046; /* olive-yellow pill */
+    --animal-wallet-shadow: #8e7d2c;
+    --animal-wallet-halo: #fffbe7; /* cream outer halo */
+}

@@ -1,0 +1,40 @@
+/* ============================================================
+   Animal Island UI — Elevation & motion tokens
+   Two shadow families: (1) soft warm elevation for cards & default
+   buttons, (2) the signature 3D "pixel-stack" bottom shadow that
+   ONLY primary / danger-primary buttons, opt-in Inputs and Switch
+   tracks use. Never cold black; never a drop-shadow on a Card.
+   ============================================================ */
+
+:root {
+    /* ---------- Soft elevation (warm, diffuse) ---------- */
+    --animal-shadow-sm: 0 2px 4px 0 rgba(61, 52, 40, 0.06); /* default btn rest */
+    --animal-shadow-base: 0 3px 10px 0 rgba(61, 52, 40, 0.1); /* default btn hover / tooltip */
+    --animal-shadow-lg: 0 8px 24px 0 rgba(61, 52, 40, 0.14); /* feature card hover */
+
+    /* ---------- 3D game-button pixel stack ---------- */
+    --animal-shadow-btn-color: #bdaea0; /* primary button stack */
+    --animal-shadow-btn: 0 5px 0 0 #bdaea0; /* rest */
+    --animal-shadow-btn-hover: 0 6px 0 0 #bdaea0; /* hover (lifts up) */
+    --animal-shadow-btn-active: 0 1px 0 0 #bdaea0; /* active (presses down) */
+    --animal-shadow-btn-danger: 0 5px 0 0 #c94444; /* danger-primary rest */
+
+    --animal-shadow-input-color: #d4c9b4; /* opt-in input stack */
+    --animal-shadow-input: 0 3px 0 0 #d4c9b4; /* middle input, shadow={true} */
+
+    /* Switch track — inset only, handle stays flat */
+    --animal-shadow-switch-off: inset 0 2px 4px rgba(114, 93, 66, 0.15);
+    --animal-shadow-switch-on: inset 0 2px 4px rgba(90, 158, 30, 0.2);
+
+    /* Drawer panel elevation (directional set at component) */
+    --animal-shadow-drawer: 0 12px 32px rgba(61, 52, 40, 0.18);
+
+    /* ---------- Focus ring ---------- */
+    --animal-focus-ring: 0 0 0 3px rgba(255, 204, 0, 0.15); /* yellow input halo */
+
+    /* ---------- Motion ---------- */
+    --animal-motion-duration-fast: 0.15s; /* @kind other */
+    --animal-motion-duration-base: 0.25s; /* @kind other */
+    --animal-motion-duration-slow: 0.35s; /* @kind other */
+    --animal-motion-ease: cubic-bezier(0.4, 0, 0.2, 1); /* @kind other */
+}
