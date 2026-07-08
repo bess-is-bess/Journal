@@ -6,6 +6,6 @@
    SUPABASE_ANON_KEY is the long "anon public" key (safe to ship in the browser). */
 
 window.JOURNAL_CONFIG = {
-    SUPABASE_URL: '',
-    SUPABASE_ANON_KEY: '',
+    SUPABASE_URL: 'https://smkeptzjsbnputoudmkj.supabase.co/rest/v1/',
+    SUPABASE_ANON_KEY: 'sb_publishable_WFJhwrrHEQ0tuSxby1o8Iw_cDDwKQKf',
 };
