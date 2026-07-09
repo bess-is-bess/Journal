@@ -4,12 +4,12 @@ const {
     NS: J_NS, jAsset: J_asset, HEX: J_HEX, journalStyles: JS,
     EmptyState: J_Empty, CategoryCard: J_CatCard, ItemCard: J_ItemCard,
     CategoryDrawer: J_CatDrawer, ItemDrawer: J_ItemDrawer,
-    CollectRow: J_CollectRow, CollectDrawer: J_CollectDrawer, formatDay: J_formatDay, dayKey: J_dayKey,
+    CollectRow: J_CollectRow, CollectDrawer: J_CollectDrawer, LoginScreen: J_LoginScreen, formatDay: J_formatDay, dayKey: J_dayKey,
 } = window.JournalParts;
 const { Title: J_Title, Button: J_Button, Modal: J_Modal, Footer: J_Footer, Cursor: J_Cursor } = J_NS;
 const DB = window.JournalDB;
 
-function JournalApp() {
+function JournalApp({ onSignOut }) {
     const [loading, setLoading] = React.useState(true);
     const [cats, setCats] = React.useState([]);
     const [stats, setStats] = React.useState({}); // { catId: { count, qty } } — collected items only
@@ -151,6 +151,7 @@ function JournalApp() {
                         <div style={{ fontSize: 13, fontWeight: 600, color: '#9f927d', marginTop: 3 }}>Your cozy little collection</div>
                     </div>
                     <J_Button type={view.name === 'tocollect' ? 'primary' : 'default'} onClick={openCollect}>ToCollect List</J_Button>
+                    {onSignOut ? <J_Button type="text" onClick={onSignOut}>Sign out</J_Button> : null}
                 </div>
 
                 <div style={JS.content}>
@@ -273,4 +274,25 @@ function JournalApp() {
     );
 }
 
-window.JournalApp = JournalApp;
+/* ----- Auth gate: cloud mode requires sign-in; local mode is open ----- */
+function AuthGate() {
+    const needsAuth = !!window.JOURNAL_CLOUD;
+    const [session, setSession] = React.useState(needsAuth ? undefined : 'local'); // undefined = still checking
+
+    React.useEffect(() => {
+        if (!needsAuth) return;
+        let sub = null;
+        DB.auth.getSession().then((s) => setSession(s || null));
+        const res = DB.auth.onChange((s) => setSession(s || null));
+        sub = res && res.data && res.data.subscription;
+        return () => { if (sub) sub.unsubscribe(); };
+    }, [needsAuth]);
+
+    if (session === undefined) return null; // brief: reading the persisted session
+    if (needsAuth && !session) {
+        return <J_LoginScreen onSend={(email) => DB.auth.signInWithEmail(email).then(({ error }) => { if (error) throw error; })} />;
+    }
+    return <JournalApp onSignOut={needsAuth ? () => DB.auth.signOut() : null} />;
+}
+
+window.JournalApp = AuthGate;

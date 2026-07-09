@@ -20,6 +20,11 @@
     const sb = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
     const BUCKET = 'journal-photos';
 
+    // Track the signed-in user's id so photo uploads land in their own folder.
+    let currentUserId = null;
+    sb.auth.getSession().then(({ data }) => { currentUserId = (data.session && data.session.user.id) || null; });
+    sb.auth.onAuthStateChange((_e, session) => { currentUserId = (session && session.user.id) || null; });
+
     function uid() {
         return typeof crypto !== 'undefined' && crypto.randomUUID
             ? crypto.randomUUID()
@@ -37,7 +42,9 @@
 
     async function uploadPhoto(blob) {
         const ext = (blob.type && blob.type.split('/')[1]) || 'png';
-        const path = 'p/' + uid() + '.' + ext;
+        // Photos live under a per-user folder (<user_id>/…) so storage policies isolate them.
+        const owner = currentUserId || ((await sb.auth.getUser()).data.user || {}).id;
+        const path = owner + '/' + uid() + '.' + ext;
         const { error } = await sb.storage.from(BUCKET).upload(path, blob, { contentType: blob.type || 'image/png', upsert: false });
         if (error) throw error;
         return path;
@@ -135,6 +142,17 @@
             const { error } = await sb.from('items').delete().eq('id', id);
             if (error) throw error;
         },
+    };
+
+    // ---------- Auth (email magic-link) ----------
+    CloudDB.auth = {
+        async getSession() { return (await sb.auth.getSession()).data.session; },
+        async signInWithEmail(email) {
+            const redirect = window.location.href.split('#')[0].split('?')[0];
+            return sb.auth.signInWithOtp({ email: email, options: { emailRedirectTo: redirect } });
+        },
+        async signOut() { return sb.auth.signOut(); },
+        onChange(cb) { return sb.auth.onAuthStateChange((_e, session) => cb(session)); },
     };
 
     window.JournalDB = CloudDB;

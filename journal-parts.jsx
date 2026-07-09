@@ -419,4 +419,62 @@ function CollectDrawer({ open, editing, categories, onClose, onSave }) {
     );
 }
 
-window.JournalParts = { NS, jAsset, CAT_COLORS, HEX, journalStyles, PhotoImg, PhotoPlaceholder, MiniBtn, EmptyState, CategoryCard, ItemCard, CategoryDrawer, ItemDrawer, QtyStepper, TickBox, CollectRow, CollectDrawer, formatDay, dayKey };
+/* ============================================================
+   Sign-in screen (email magic-link)
+   ============================================================ */
+function LoginScreen({ onSend }) {
+    const [email, setEmail] = React.useState('');
+    const [status, setStatus] = React.useState('idle'); // idle | sending | sent | error
+    const [err, setErr] = React.useState('');
+    const valid = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.trim());
+
+    const submit = async () => {
+        if (!valid || status === 'sending') return;
+        setStatus('sending');
+        setErr('');
+        try {
+            await onSend(email.trim());
+            setStatus('sent');
+        } catch (e) {
+            setErr((e && e.message) || 'Something went wrong. Please try again.');
+            setStatus('error');
+        }
+    };
+
+    return (
+        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, boxSizing: 'border-box', fontFamily: 'var(--animal-font-family)', color: '#725d42' }}>
+            <div style={{ width: '100%', maxWidth: 380 }}>
+                <div style={{ textAlign: 'center', marginBottom: 22 }}>
+                    <img src={jAsset('assets/logo/animal_icon.png')} alt="" style={{ width: 64, height: 64 }} />
+                    <div style={{ fontSize: 28, fontWeight: 900, color: '#794f27', marginTop: 8 }}>Journal</div>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: '#9f927d', marginTop: 4 }}>Your cozy little collection</div>
+                </div>
+                <Card>
+                    {status === 'sent' ? (
+                        <div style={{ textAlign: 'center', padding: '8px 4px' }}>
+                            <div style={{ fontSize: 40, marginBottom: 8 }}>✉️</div>
+                            <div style={{ fontSize: 17, fontWeight: 800, color: '#794f27', marginBottom: 6 }}>Check your email</div>
+                            <div style={{ fontSize: 14, color: '#8a7b66', marginBottom: 18 }}>We sent a sign-in link to <b>{email.trim()}</b>. Open it on this device to come in.</div>
+                            <Button type="text" onClick={() => { setStatus('idle'); setEmail(''); }}>Use a different email</Button>
+                        </div>
+                    ) : (
+                        <div style={{ fontSize: 14, fontWeight: 600 }}>
+                            <div style={{ fontSize: 16, fontWeight: 800, color: '#794f27', marginBottom: 4 }}>Sign in</div>
+                            <div style={{ fontSize: 13, color: '#8a7b66', marginBottom: 16 }}>Enter your email and we’ll send you a magic link — no password needed.</div>
+                            <label style={{ display: 'block', marginBottom: 8, color: '#794f27' }}>Email</label>
+                            <Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" onKeyDown={(e) => { if (e.key === 'Enter') submit(); }} />
+                            {status === 'error' ? <div style={{ color: '#e05a5a', fontSize: 13, marginTop: 10 }}>{err}</div> : null}
+                            <div style={{ marginTop: 18 }}>
+                                <Button type="primary" block disabled={!valid || status === 'sending'} onClick={submit}>
+                                    {status === 'sending' ? 'Sending…' : 'Email me a sign-in link'}
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+                </Card>
+            </div>
+        </div>
+    );
+}
+
+window.JournalParts = { NS, jAsset, CAT_COLORS, HEX, journalStyles, PhotoImg, PhotoPlaceholder, MiniBtn, EmptyState, CategoryCard, ItemCard, CategoryDrawer, ItemDrawer, QtyStepper, TickBox, CollectRow, CollectDrawer, LoginScreen, formatDay, dayKey };
