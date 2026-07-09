@@ -17,7 +17,12 @@
         return;
     }
 
-    const sb = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
+    const sb = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY, {
+        // Implicit flow puts the session in the URL hash, so a magic link completes
+        // sign-in in ANY browser/device it's opened in (PKCE would require the same
+        // browser that requested it). detectSessionInUrl consumes that hash on load.
+        auth: { flowType: 'implicit', detectSessionInUrl: true, persistSession: true, autoRefreshToken: true },
+    });
     const BUCKET = 'journal-photos';
 
     // Track the signed-in user's id so photo uploads land in their own folder.

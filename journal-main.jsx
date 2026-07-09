@@ -281,14 +281,22 @@ function AuthGate() {
 
     React.useEffect(() => {
         if (!needsAuth) return;
-        let sub = null;
-        DB.auth.getSession().then((s) => setSession(s || null));
+        DB.auth.getSession().then((s) => setSession(s || null)).catch(() => setSession(null));
         const res = DB.auth.onChange((s) => setSession(s || null));
-        sub = res && res.data && res.data.subscription;
-        return () => { if (sub) sub.unsubscribe(); };
+        const sub = res && res.data && res.data.subscription;
+        // Safety net: never strand the user on a blank screen if auth init stalls.
+        const t = setTimeout(() => setSession((prev) => (prev === undefined ? null : prev)), 8000);
+        return () => { if (sub) sub.unsubscribe(); clearTimeout(t); };
     }, [needsAuth]);
 
-    if (session === undefined) return null; // brief: reading the persisted session
+    if (session === undefined) {
+        return (
+            <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, fontFamily: 'var(--animal-font-family)', color: '#9f927d' }}>
+                <img src={J_asset('assets/logo/animal_icon.png')} alt="" style={{ width: 56, height: 56 }} />
+                <div style={{ fontSize: 14, fontWeight: 700 }}>Loading…</div>
+            </div>
+        );
+    }
     if (needsAuth && !session) {
         return <J_LoginScreen onSend={(email) => DB.auth.signInWithEmail(email).then(({ error }) => { if (error) throw error; })} />;
     }
