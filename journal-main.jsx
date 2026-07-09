@@ -9,7 +9,7 @@ const {
 const { Title: J_Title, Button: J_Button, Modal: J_Modal, Footer: J_Footer, Cursor: J_Cursor } = J_NS;
 const DB = window.JournalDB;
 
-function JournalApp({ onSignOut }) {
+function JournalMain({ onSignOut }) {
     const [loading, setLoading] = React.useState(true);
     const [cats, setCats] = React.useState([]);
     const [stats, setStats] = React.useState({}); // { catId: { count, qty } } — collected items only
@@ -300,7 +300,7 @@ function AuthGate() {
     if (needsAuth && !session) {
         return <J_LoginScreen onSend={(email) => DB.auth.signInWithEmail(email).then(({ error }) => { if (error) throw error; })} />;
     }
-    return <JournalApp onSignOut={needsAuth ? () => DB.auth.signOut() : null} />;
+    return <JournalMain onSignOut={needsAuth ? () => DB.auth.signOut() : null} />;
 }
 
 window.JournalApp = AuthGate;
